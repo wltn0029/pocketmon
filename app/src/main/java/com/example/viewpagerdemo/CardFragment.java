@@ -153,11 +153,14 @@ public class CardFragment extends Fragment {
         loadAnimations();
         changeCameraDistance();
 
-        captureBtn = (Button) fragView.findViewById(R.id.capture);
+        captureBtn = (Button) fragView.findViewById(R.id.pocketmon);
         captureBtn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                takeScreenshot();
+                Intent intent = new Intent(this, PocketmonGo.class);
+                //account_id = 계정 아이디
+                intent.putExtra("acoount_id", message);
+                startActivity(intent);
             }
         });
 

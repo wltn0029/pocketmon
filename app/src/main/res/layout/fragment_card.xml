@@ -56,12 +56,12 @@
             android:layout_height="50dp"
             android:text="capture"
             />
+
         <Button
-            android:id="@+id/share"
+            android:id="@+id/pocketmon"
             android:layout_width="100dp"
             android:layout_height="50dp"
-            android:text="share"
-            />
+            android:text="share" />
         <Button
             android:id="@+id/storage"
             android:layout_width="100dp"
