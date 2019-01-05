@@ -14,6 +14,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,15 +71,16 @@ public class GoogleLoginActivity extends Activity {
         // the GoogleSignInAccount will be non-null.
         account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
-            int id=0;
+            String reply="";
             try{
-                String str = loadID();
-                JSONObject json = new JSONObject(str);
-                id = (int) json.get("pk");
+                reply = loadID();
+                JsonParser parser = new JsonParser();
+                JsonElement element = parser.parse(reply);
+                int id = element.getAsJsonObject().get("pk").getAsInt();
             }catch(Exception e){
                 e.printStackTrace();
             }
-            Log.d("id:",String.valueOf(id));
+            //Log.d("id:",String.valueOf(id));
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("userAccount", account.toString());
             Log.d("GOOGLE_LOGIN>>>>>", account.toString());
@@ -129,11 +133,12 @@ public class GoogleLoginActivity extends Activity {
             account = completedTask.getResult(ApiException.class);
 
             // Signed in successfully, pass account
-            int id=0;
+            String reply="";
             try{
-                String str = loadID();
-                JSONObject json = new JSONObject(str);
-                id = (int) json.get("pk");
+                reply = loadID();
+                JsonParser parser = new JsonParser();
+                JsonElement element = parser.parse(reply);
+                int id = element.getAsJsonObject().get("pk").getAsInt();
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -172,7 +177,7 @@ public class GoogleLoginActivity extends Activity {
                         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("account",account.toString());
-                        InputStream in = new BufferedInputStream(connection.getInputStream());
+                       // InputStream in = new BufferedInputStream(connection.getInputStream());
 
                         writer.write(jsonObject.toString());
                         writer.flush();
@@ -196,40 +201,24 @@ public class GoogleLoginActivity extends Activity {
                 }
             };
             sendHttpRequestThread.start();
-            //GET : personal id
-          /*  connection.setRequestMethod("GET");
-            connection.setConnectTimeout(1000);
-            connection.setReadTimeout(1000);
-            is = connection.getInputStream();
-            reader = new InputStreamReader(is);
-            bfreader = new BufferedReader(reader);
-            String line = bfreader.readLine();
-            StringBuffer readTextBuf = new StringBuffer();
-            while(line!=null){
-                readTextBuf.append(line);
-                sb.append(line);
-                line = bfreader.readLine();
-            }*/
+
         } catch(Exception e){
             e.printStackTrace();
-        }/*finally {
-            try{
-                if(bfreader!=null){
-                    bfreader.close();
-                    bfreader = null;
-                }
-                if(reader!=null){
-                   reader.close();
-                   reader = null;
-                }
-                if(connection !=null){
-                    connection.disconnect();
-                    connection=null;
-                }
-            }catch(Exception e){
-                e.printStackTrace();
+        }
+        String reply="";
+
+        try{
+            InputStream in = connection.getInputStream();
+            StringBuffer bf = new StringBuffer();
+            int chr;
+            while((chr=in.read())!=-1){
+                bf.append((char)chr);
             }
-        }*/
-        return sb.toString();
+            reply = bf.toString();
+            Log.d(">>>>>>>>>>>>>>>>>>>>>>>>>>",reply,null);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return reply;
     }
 }
