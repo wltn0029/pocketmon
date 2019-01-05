@@ -77,11 +77,11 @@
     body : json
     ex)
 
-{
-    "id" : "2"    // user_account_id
-    "phone_number" : "123-456-789"    // 전화번호
-    "name" : "수수수"                  // 전화번호에 해당하는 이름
-}
+    {
+        "id" : "2"    // user_account_id
+        "phone_number" : "123-456-789"    // 전화번호
+        "name" : "수수수"                  // 전화번호에 해당하는 이름
+    }
 
     
 /3. response :  json
@@ -97,39 +97,36 @@
 
  /4. request
 
-    url : socrip3.kaist.ac.kr:9380/contact/push/
+    url : socrip3.kaist.ac.kr:9380/contact/<account_id>
+    ex> socrip3.kaist.ac.kr:9380/contact/3
 
-    method : POST
+    method : GET
 
     Content-Type : application/json
 
-    body : json
-    ex)
+    body : none
 
-    [{
-        "id" : "2"    // user_account_id
-        "phone_number" : "123-456-789"    // 전화번호
-        "name" : "수수수"                  // 전화번호에 해당하는 이름
-    },
-    {
-        "id" : "2"    // user_account_id
-        "phone_number" : "123-456-789"    // 전화번호
-        "name" : "수수수"                  // 전화번호에 해당하는 이름
-    },
-    {
-        "id" : "2"    // user_account_id
-        "phone_number" : "123-456-789"    // 전화번호
-        "name" : "수수수"                  // 전화번호에 해당하는 이름
-    },
-    {
-        "id" : "2"    // user_account_id
-        "phone_number" : "123-456-789"    // 전화번호
-        "name" : "수수수"                  // 전화번호에 해당하는 이름
-    }]
-
-/3. response :  http_response
+/3. response :  json array
 
   ex)
 
-    http 200(성공)
-    http 400(실패)
+    [
+    {
+        "id": 5,
+        "name": "김태",
+        "phone_number": "654010-1234-5678",
+        "account": 2
+    },
+    {
+        "id": 3,
+        "name": "태수",
+        "phone_number": "010-1234-5678",
+        "account": 2
+    },
+    {
+        "id": 4,
+        "name": "태수",
+        "phone_number": "010-1234-5678",
+        "account": 2
+    }
+    ]
