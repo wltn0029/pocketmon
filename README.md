@@ -94,3 +94,42 @@
     "account": 3,                           // user_account_id
     "number": "010-4564-6874"               // 서버 연락처에 저장한 
     }
+
+ /4. request
+
+    url : socrip3.kaist.ac.kr:9380/contact/push/
+
+    method : POST
+
+    Content-Type : application/json
+
+    body : json
+    ex)
+
+[{
+    "id" : "2"    // user_account_id
+    "phone_number" : "123-456-789"    // 전화번호
+    "name" : "수수수"                  // 전화번호에 해당하는 이름
+},
+{
+    "id" : "2"    // user_account_id
+    "phone_number" : "123-456-789"    // 전화번호
+    "name" : "수수수"                  // 전화번호에 해당하는 이름
+},
+{
+    "id" : "2"    // user_account_id
+    "phone_number" : "123-456-789"    // 전화번호
+    "name" : "수수수"                  // 전화번호에 해당하는 이름
+},
+{
+    "id" : "2"    // user_account_id
+    "phone_number" : "123-456-789"    // 전화번호
+    "name" : "수수수"                  // 전화번호에 해당하는 이름
+}]
+
+/3. response :  http_response
+
+  ex)
+
+    http 200(성공)
+    http 400(실패)
