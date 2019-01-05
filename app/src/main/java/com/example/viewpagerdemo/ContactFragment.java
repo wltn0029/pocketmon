@@ -33,11 +33,9 @@ public class ContactFragment extends Fragment {
 
     EditText nameText;
     EditText phoneText;
-    EditText addressText;
 
-    Button nextBtn;
-
-    String selectedString;
+    Button saveBtn;
+    Button syncroBtn;
 
     public static ArrayAdapter adapter;
 
@@ -74,7 +72,7 @@ public class ContactFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_contact, container, false);
         this.fragView = view;
         listview = (ListView) fragView.findViewById(R.id.listview);
-        adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_single_choice, MainActivity.items);
+        adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, MainActivity.items);
         listview.setAdapter(adapter);
 
         CheckPermissionLoadContact();
@@ -82,13 +80,12 @@ public class ContactFragment extends Fragment {
 
         nameText = (EditText) fragView.findViewById(R.id.nameText);
         phoneText = (EditText) fragView.findViewById(R.id.phoneText);
-        addressText = (EditText) fragView.findViewById(R.id.addressText);
+        saveBtn = (Button) fragView.findViewById(R.id.saveBtn);
+        syncroBtn = (Button)fragView.findViewById(R.id.syncroBtn);
 
-        nextBtn = (Button) fragView.findViewById(R.id.nextBtn);
-
-        nextBtn.setOnClickListener(new Button.OnClickListener() {
+        saveBtn.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                onClickNextBtn();
+                onClickSaveBtn();
             }
         });
 
@@ -123,7 +120,7 @@ public class ContactFragment extends Fragment {
                     {
                         //키보드 내려왔을때
                         MainActivity.mNavigation.setVisibility(View.VISIBLE);
-                        nextBtn.setVisibility(View.VISIBLE);
+                        saveBtn.setVisibility(View.VISIBLE);
 
                     }
                 });
@@ -139,7 +136,7 @@ public class ContactFragment extends Fragment {
                     {
                         //키보드 올라왔을때
                         MainActivity.mNavigation.setVisibility(View.INVISIBLE);
-                        nextBtn.setVisibility(View.GONE);
+                        saveBtn.setVisibility(View.GONE);
 
                     }
                 });
@@ -207,22 +204,21 @@ public class ContactFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    public void onClickNextBtn(){
+    public void onClickSaveBtn(){
         int count, idx;
         count = adapter.getCount();
 
         Log.i("***COUNT***", "" + MainActivity.dataList.size());
 
-        if(((nameText.getText().length() > 0) && (phoneText.getText().length() > 0)) && (addressText.getText().length() > 0)){
-            Toast.makeText(getContext(), nameText.getText() + " " + phoneText.getText() + " " + addressText.getText() ,Toast.LENGTH_SHORT).show();
+        if(((nameText.getText().length() > 0) && (phoneText.getText().length() > 0)) ){
+            Toast.makeText(getContext(), nameText.getText() + " " + phoneText.getText() ,Toast.LENGTH_SHORT).show();
 
             MainActivity.contactName = nameText.getText().toString();
             MainActivity.contactPhone = phoneText.getText().toString();
-            MainActivity.contactAddress = addressText.getText().toString();
 
             MainActivity.mViewPager.setCurrentItem(1, true);
         } else {
-            Toast.makeText(getContext(), "모든 필드에 정보를 입력하세요" ,Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Fill every blank" ,Toast.LENGTH_SHORT).show();
         }
     }
 }

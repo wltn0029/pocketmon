@@ -311,9 +311,7 @@ public class CardFragment extends Fragment {
         if(MainActivity.contactPhone != null) {
             phoneCard.setText(MainActivity.contactPhone);
         }
-        if(MainActivity.contactAddress != null) {
-            addressCard.setText(MainActivity.contactAddress);
-        }
+
     }
 
     private  void setUserImage() {

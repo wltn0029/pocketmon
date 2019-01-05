@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -33,23 +34,20 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class GoogleLoginActivity extends Activity {
     private int RC_SIGN_IN = 1;
     private GoogleSignInClient mGoogleSignInClient;
     private GoogleSignInAccount account;
-    final StringBuilder sb = new StringBuilder();
-    BufferedReader bfreader=null;
-    InputStreamReader reader=null;
     InputStream is;
-    URL url;
-    {
-        try {
-            url = new URL("http://143.248.140.251:9380/account/");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-    HttpURLConnection connection =null;
+    public static String responseStr;
+    int id;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -70,20 +68,27 @@ public class GoogleLoginActivity extends Activity {
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         account = GoogleSignIn.getLastSignedInAccount(this);
+        boolean firstVisited = false;
         if (account != null) {
-            String reply="";
             try{
-                reply = loadID();
+                String reply =loadID();
                 JsonParser parser = new JsonParser();
+                Log.d("asdfasdf",1+"");
                 JsonElement element = parser.parse(reply);
-                int id = element.getAsJsonObject().get("pk").getAsInt();
+                Log.d("asdfasdf",2+"");
+                id = element.getAsJsonObject().get("pk").getAsInt();
+                Log.d(">>>>>>>>>>>>>","responseStr : "+reply);
+
+                Log.d(">>>>>>>>>>>>>>>",String.valueOf(id),null);
+                firstVisited = element.getAsJsonObject().get("is_first").getAsBoolean();
             }catch(Exception e){
                 e.printStackTrace();
             }
             //Log.d("id:",String.valueOf(id));
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("userAccount", account.toString());
-            Log.d("GOOGLE_LOGIN>>>>>", account.toString());
+            intent.putExtra("userAccountID", String.valueOf(id));
+            intent.putExtra("isFirstVisited",firstVisited);
+            Log.d(">>>>>>>>>>>>>>>", "id:"+id+"firstvisited"+String.valueOf(firstVisited));
             startActivity(intent);
         }
     }
@@ -104,7 +109,7 @@ public class GoogleLoginActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("userAccount", "");
+                intent.putExtra("userAccountID", "");
                 startActivity(intent);
             }
         });
@@ -133,18 +138,21 @@ public class GoogleLoginActivity extends Activity {
             account = completedTask.getResult(ApiException.class);
 
             // Signed in successfully, pass account
-            String reply="";
+            boolean firstVisited=false;
             try{
-                reply = loadID();
+                String reply=loadID();
                 JsonParser parser = new JsonParser();
                 JsonElement element = parser.parse(reply);
-                int id = element.getAsJsonObject().get("pk").getAsInt();
+                Log.d(">>>>>>>>>>>>>","responseStr : "+reply);
+                id = element.getAsJsonObject().get("pk").getAsInt();
+                firstVisited = element.getAsJsonObject().get("is_first").getAsBoolean();
             }catch(Exception e){
                 e.printStackTrace();
             }
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("userAccount", account.toString());
-            Log.d("GOOGLE_LOGIN>>>>>", account.toString());
+            intent.putExtra("userAccountID", String.valueOf(id));
+            intent.putExtra("isFirstVisited",firstVisited);
+            Log.d(">>>>>>>>>>>>>>>", "id:"+id+"firstvisited"+String.valueOf(firstVisited));
             startActivity(intent);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -157,68 +165,27 @@ public class GoogleLoginActivity extends Activity {
     }
 
     public String loadID(){
-        try{
-            //POST : google login account
-            Thread sendHttpRequestThread = new Thread() {
-                @Override
-                public void run(){
-                    //Initialize variables
-                    //HttpURLConnection httpConnection = null;
-                    try {
-                        // Set URL to get all contacts
-                        //URL url = new URL(url);
-                        // Open HttpURLConnection of the URL and set method & timeout
-                        connection = (HttpURLConnection) url.openConnection();
-                        connection.setRequestMethod("POST");
-                        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-                        connection.setConnectTimeout(1000);
-
-                        OutputStream os = connection.getOutputStream();
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("account",account.toString());
-                       // InputStream in = new BufferedInputStream(connection.getInputStream());
-
-                        writer.write(jsonObject.toString());
-                        writer.flush();
-                        writer.close();
-                        os.close();
-
-                        connection.connect();
-                        Log.d("ADDCONTACT>>>>>", "Request to post " + account.toString());
-                        Log.d("ADDCONTACT>>>>>", "Response:" + connection.getResponseMessage());
-                    } catch (MalformedURLException e) {
-                        Log.d("ADDCONTACT>>>>>", "malformed url exception");
-                    } catch (IOException e) {
-                        Log.d("ADDCONTACT>>>>>", "IOException");
-                    } catch (JSONException e){
-                        Log.d("ADDCONTACT>>>>>", "JSONExection");
-                    } finally{
-                        if (connection != null) {
-                            connection.disconnect();
-                        }
-                    }
+        String reply;
+        Call<ResponseBody> call = RetrofitClient
+                                    .getInstacne()
+                                    .getApi()
+                                    .useraccount(account.toString());
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    responseStr = response.body().string();
+                    Log.d(">>>>>>>>>>>>>","3 : "+responseStr);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            };
-            sendHttpRequestThread.start();
-
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        String reply="";
-
-        try{
-            InputStream in = connection.getInputStream();
-            StringBuffer bf = new StringBuffer();
-            int chr;
-            while((chr=in.read())!=-1){
-                bf.append((char)chr);
             }
-            reply = bf.toString();
-            Log.d(">>>>>>>>>>>>>>>>>>>>>>>>>>",reply,null);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(GoogleLoginActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
+            }
+        });
+        reply = responseStr;
         return reply;
     }
 }

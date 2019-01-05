@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity
 
     public static String contactName;
     public static String contactPhone;
-    public static String contactAddress;
+    public static int userAccountId;
+    public static boolean isFristVisited;
 
     // FOR PERMISSION
 
@@ -160,9 +161,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//TODO: 로그인 창 액티비티 제거
+
         super.onCreate(savedInstanceState);
        setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        userAccountId=Integer.valueOf(intent.getExtras().getString("userAccountID"));
+        isFristVisited = intent.getExtras().getBoolean("isFirstVisited");
+        Toast.makeText(this,String.valueOf(userAccountId),Toast.LENGTH_SHORT).show();
 
         items = new ArrayList<String>();
         dataList = new ArrayList<Map<String, String>>();
@@ -208,10 +214,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-
-        //open login activity first
-        Intent intent = new Intent(this,OpenActivity.class);
-        startActivity(intent);
 
     }
 
@@ -508,7 +510,6 @@ public class MainActivity extends AppCompatActivity
                         HashMap tmpMap = new HashMap<String, String>();
                         tmpMap.put("name", name);
                         tmpMap.put("phone", phoneNo);
-                        tmpMap.put("address", "");
 
                         if(dataList != null) {
                             dataList.add(tmpMap);
