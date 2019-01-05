@@ -67,13 +67,20 @@
   
  /3. request
 
-    url : socrip3.kaist.ac.kr:9380/contact/<user_id>
+    url : socrip3.kaist.ac.kr:9380/contact/
 
-    method : GET
+    method : POST
 
     Content-Type : application/json
 
-    body : none
+    body : json
+    ex)
+
+{
+    "id" : "2"
+    "phone_number" : "123-456-789"
+    "name" : "수수수"
+}
 
     
 /3. response :  json array
