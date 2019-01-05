@@ -42,28 +42,29 @@
 
 /2. response : json array
 
-  ex)
 
-    [
-      {
-          "id": 3,
-          "name": "태수",
-          "phone_number": "010-1234-5678",
-          "account": 2
-      },
-      {
-          "id": 4,
-          "name": "태수",
-          "phone_number": "010-1234-5678",
-          "account": 2
-      },
-      {
-          "id": 5,
-          "name": "김태",
-          "phone_number": "654010-1234-5678",
-          "account": 2
-      }
-    ]
+      ex)
+
+        [
+          {
+              "id": 3,
+              "name": "태수",
+              "phone_number": "010-1234-5678",
+              "account": 2
+          },
+          {
+              "id": 4,
+              "name": "태수",
+              "phone_number": "010-1234-5678",
+              "account": 2
+          },
+          {
+              "id": 5,
+              "name": "김태",
+              "phone_number": "654010-1234-5678",
+              "account": 2
+          }
+        ]
   
  /3. request
 
@@ -77,33 +78,19 @@
     ex)
 
 {
-    "id" : "2"
-    "phone_number" : "123-456-789"
-    "name" : "수수수"
+    "id" : "2"    // user_account_id
+    "phone_number" : "123-456-789"    // 전화번호
+    "name" : "수수수"                  // 전화번호에 해당하는 이름
 }
 
     
-/3. response :  json array
+/3. response :  json
 
   ex)
 
-    [
-      {
-          "id": 3,
-          "name": "태수",
-          "phone_number": "010-1234-5678",
-          "account": 2
-      },
-      {
-          "id": 4,
-          "name": "태수",
-          "phone_number": "010-1234-5678",
-          "account": 2
-      },
-      {
-          "id": 5,
-          "name": "김태",
-          "phone_number": "654010-1234-5678",
-          "account": 2
-      }
-    ]
+    {
+    "id": 48,                            // 생성된 연락처의 id (프론트 구현에는 필요 없음)
+    "name": "태수킴",                     // 서버 연락처에 저장한 이름
+    "account": 3,                           // user_account_id
+    "number": "010-4564-6874"               // 서버 연락처에 저장한 
+    }
