@@ -1,12 +1,14 @@
 package com.example.viewpagerdemo;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.icu.util.Output;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -16,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -33,6 +36,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -47,6 +52,9 @@ public class GoogleLoginActivity extends Activity {
     private GoogleSignInAccount account;
     InputStream is;
     public static String responseStr;
+    private static ProgressDialog dialog;
+    private String reply="";
+    public Map<String,String> result;
     int id;
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -60,7 +68,9 @@ public class GoogleLoginActivity extends Activity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
     }
+
 
     @Override
     protected void onStart() {
@@ -71,14 +81,18 @@ public class GoogleLoginActivity extends Activity {
         boolean firstVisited = false;
         if (account != null) {
             try{
-                String reply =loadID();
+                result = new HashMap<String, String>();
+                loadID();
+                while(!result.containsKey("CS496_application_result_test")){}
+                result.remove("CS496_application_result_test");
+//               wait(10000);
                 JsonParser parser = new JsonParser();
-                Log.d("asdfasdf",1+"");
-                JsonElement element = parser.parse(reply);
-                Log.d("asdfasdf",2+"");
+                Log.d(">>>>>>>>>>>>>>>",1+"");
+                Log.d(">>>>>>>>>>>>>>>",2+"");
+                System.out.println("reply : " + responseStr);
+                JsonElement element = parser.parse(responseStr);
                 id = element.getAsJsonObject().get("pk").getAsInt();
                 Log.d(">>>>>>>>>>>>>","responseStr : "+reply);
-
                 Log.d(">>>>>>>>>>>>>>>",String.valueOf(id),null);
                 firstVisited = element.getAsJsonObject().get("is_first").getAsBoolean();
             }catch(Exception e){
@@ -88,6 +102,7 @@ public class GoogleLoginActivity extends Activity {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("userAccountID", String.valueOf(id));
             intent.putExtra("isFirstVisited",firstVisited);
+            Log.d(">>>>>>>>>>>>>>>tag",3+"");
             Log.d(">>>>>>>>>>>>>>>", "id:"+id+"firstvisited"+String.valueOf(firstVisited));
             startActivity(intent);
         }
@@ -140,10 +155,14 @@ public class GoogleLoginActivity extends Activity {
             // Signed in successfully, pass account
             boolean firstVisited=false;
             try{
-                String reply=loadID();
+                result = new HashMap<String, String>();
+                loadID();
+                while(!result.containsKey("CS496_application_result_test")){}
+                result.remove("CS496_application_result_test");
                 JsonParser parser = new JsonParser();
-                JsonElement element = parser.parse(reply);
-                Log.d(">>>>>>>>>>>>>","responseStr : "+reply);
+                JsonElement element = parser.parse(responseStr);
+                System.out.println("element : " + element);
+                Log.d(">>>>>>>>>>>>>","responseStr : "+responseStr);
                 id = element.getAsJsonObject().get("pk").getAsInt();
                 firstVisited = element.getAsJsonObject().get("is_first").getAsBoolean();
             }catch(Exception e){
@@ -164,28 +183,22 @@ public class GoogleLoginActivity extends Activity {
         }
     }
 
-    public String loadID(){
-        String reply;
-        Call<ResponseBody> call = RetrofitClient
-                                    .getInstacne()
-                                    .getApi()
-                                    .useraccount(account.toString());
-        call.enqueue(new Callback<ResponseBody>() {
+    public void loadID() {
+        final Call<ResponseBody> call = RetrofitClient.getInstacne()
+                                                .getApi()
+                                                .useraccount(account.toString());
+        Thread loadIDThread = new Thread(){
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    responseStr = response.body().string();
-                    Log.d(">>>>>>>>>>>>>","3 : "+responseStr);
-                } catch (IOException e) {
+            public void run(){
+                try{
+                    responseStr = call.execute().body().string();
+                    result.put("CS496_application_result_test","YES");
+                }catch (Exception e){
+                    result.put("CS496_application_result_test","YES");
                     e.printStackTrace();
                 }
             }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(GoogleLoginActivity.this,"ERROR",Toast.LENGTH_SHORT).show();
-            }
-        });
-        reply = responseStr;
-        return reply;
+        };
+        loadIDThread.start();
     }
 }
