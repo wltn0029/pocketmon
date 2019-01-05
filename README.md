@@ -106,26 +106,26 @@
     body : json
     ex)
 
-[{
-    "id" : "2"    // user_account_id
-    "phone_number" : "123-456-789"    // 전화번호
-    "name" : "수수수"                  // 전화번호에 해당하는 이름
-},
-{
-    "id" : "2"    // user_account_id
-    "phone_number" : "123-456-789"    // 전화번호
-    "name" : "수수수"                  // 전화번호에 해당하는 이름
-},
-{
-    "id" : "2"    // user_account_id
-    "phone_number" : "123-456-789"    // 전화번호
-    "name" : "수수수"                  // 전화번호에 해당하는 이름
-},
-{
-    "id" : "2"    // user_account_id
-    "phone_number" : "123-456-789"    // 전화번호
-    "name" : "수수수"                  // 전화번호에 해당하는 이름
-}]
+    [{
+        "id" : "2"    // user_account_id
+        "phone_number" : "123-456-789"    // 전화번호
+        "name" : "수수수"                  // 전화번호에 해당하는 이름
+    },
+    {
+        "id" : "2"    // user_account_id
+        "phone_number" : "123-456-789"    // 전화번호
+        "name" : "수수수"                  // 전화번호에 해당하는 이름
+    },
+    {
+        "id" : "2"    // user_account_id
+        "phone_number" : "123-456-789"    // 전화번호
+        "name" : "수수수"                  // 전화번호에 해당하는 이름
+    },
+    {
+        "id" : "2"    // user_account_id
+        "phone_number" : "123-456-789"    // 전화번호
+        "name" : "수수수"                  // 전화번호에 해당하는 이름
+    }]
 
 /3. response :  http_response
 
