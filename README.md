@@ -20,13 +20,13 @@
         
 1. response :  json data
 
-  ex)
+      ex)
 
-    {
-      "is_first": false,          // 처음 접속한 계정인지 아닌지
-      "account": "asdfasddf",     // 구글 account
-      "pk": 2                     // 전역변수로 사용할 pk
-    }
+        {
+          "is_first": false,          // 처음 접속한 계정인지 아닌지
+          "account": "asdfasddf",     // 구글 account
+          "pk": 2                     // 전역변수로 사용할 pk
+        }
   
   
 2. request
@@ -40,9 +40,10 @@
     body : none
     
 
-response 
-  json array
+2. response : json array
+
   ex)
+
     [
       {
           "id": 3,
@@ -64,7 +65,7 @@ response
       }
     ]
   
-  request
+ 3. request
 
     url : socrip3.kaist.ac.kr:9380/contact/<user_id>
 
@@ -75,7 +76,7 @@ response
     body : none
 
     
-response :  json array
+3. response :  json array
 
   ex)
 
