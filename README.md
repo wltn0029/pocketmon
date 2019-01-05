@@ -2,7 +2,7 @@
 
 <> 는 <> 안에 해당하는 값을 넣어줘야해요
 
-1. request 
+/1. request 
 
     url : socrip3.kaist.ac.kr:9380/account/
 
@@ -18,7 +18,7 @@
           "account" : "asdfasddf"
         }
         
-1. response :  json data
+/1. response :  json data
 
       ex)
 
@@ -29,7 +29,7 @@
         }
   
   
-2. request
+/2. request
 
     url : socrip3.kaist.ac.kr:9380/contact/<user_id>
 
@@ -40,7 +40,7 @@
     body : none
     
 
-2. response : json array
+/2. response : json array
 
   ex)
 
@@ -65,7 +65,7 @@
       }
     ]
   
- 3. request
+ /3. request
 
     url : socrip3.kaist.ac.kr:9380/contact/<user_id>
 
@@ -76,7 +76,7 @@
     body : none
 
     
-3. response :  json array
+/3. response :  json array
 
   ex)
 
