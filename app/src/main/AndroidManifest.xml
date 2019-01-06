@@ -54,7 +54,10 @@
         </provider>
         <!-- FullImageActivity -->
         <activity android:name=".FullImageActivity" />
-        <activity android:name=".PocketmonGo"/>
+        <activity android:name=".PocketmonGo"
+            android:hardwareAccelerated="true">
+
+        </activity>
     </application>
 
 </manifest>

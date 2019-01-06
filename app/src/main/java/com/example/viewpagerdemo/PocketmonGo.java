@@ -53,9 +53,7 @@ import java.util.List;
 
 public class PocketmonGo extends AppCompatActivity {
 
-    private static final String TAG = "Camera2VideoImageActivi";
-    private static int userAccountId;
-    private static boolean isFirstVisited;
+    private static final String TAG = "Camera2VideoImageActiviy";
 
     private static final int REQUEST_CAMERA_PERMISSION_RESULT = 0;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT = 1;
@@ -269,27 +267,23 @@ public class PocketmonGo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-//        Intent intent = getIntent();
-//        userAccountId=intent.getIntExtra("userAccountId",0);
-//        isFirstVisited = intent.getBooleanExtra("isFirstVisited",true);
+        setContentView(R.layout.activity_pocketmon_go);
 
         createVideoFolder();
         createImageFolder();
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
         mTextureView = (TextureView) findViewById(R.id.texture);
-//        mStillImageButton =  findViewById(R.id.btn_takepicture);
-//        mStillImageButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(!(mIsTimelapse || mIsRecording)) {
-//                    checkWriteStoragePermission();
-//                }
-//                lockFocus();
-//            }
-//        });
+        mStillImageButton =  findViewById(R.id.btn_takepicture);
+        mStillImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!(mIsTimelapse || mIsRecording)) {
+                    checkWriteStoragePermission();
+                }
+                lockFocus();
+            }
+        });
 //        mRecordImageButton = (ImageButton) findViewById(R.id.videoOnlineImageButton);
 //        mRecordImageButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
