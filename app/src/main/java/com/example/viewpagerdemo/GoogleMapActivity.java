@@ -1,9 +1,14 @@
 package com.example.viewpagerdemo;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -16,9 +21,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -38,6 +48,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -76,7 +88,9 @@ public class GoogleMapActivity extends AppCompatActivity
     private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요합니다.
     // (참고로 Toast에서는 Context가 필요했습니다.)
 
-
+    public View marker_root_view;
+    public TextView tv_marker;
+    Marker selectedMarker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +117,6 @@ public class GoogleMapActivity extends AppCompatActivity
 
         builder.addLocationRequest(locationRequest);
 
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
@@ -111,6 +124,11 @@ public class GoogleMapActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
     }
 
+    private void setCustomMarkerView() {
+
+        marker_root_view = LayoutInflater.from(this).inflate(R.layout.custommarker,null);
+        tv_marker = (TextView) marker_root_view.findViewById(R.id.tv_marker);
+    }
 
 
 
@@ -183,6 +201,59 @@ public class GoogleMapActivity extends AppCompatActivity
 
     }
 
+    private Marker addMarker(Marker marker, boolean isSelectedMarker) {
+        double lat = marker.getPosition().latitude;
+        double lon = marker.getPosition().longitude;
+        int price = Integer.parseInt(marker.getTitle());
+        MarkerItem temp = new MarkerItem(lat, lon, price);
+        return addMarker(temp, isSelectedMarker);
+
+    }
+
+    private Marker addMarker(MarkerItem markerItem, boolean isSelectedMarker) {
+
+
+        LatLng position = new LatLng(markerItem.getLat(), markerItem.getLon());
+        int price = markerItem.getPrice();
+        String formatted = NumberFormat.getCurrencyInstance().format((price));
+
+        tv_marker.setText(formatted);
+
+        if (isSelectedMarker) {
+            tv_marker.setBackgroundResource(R.drawable.nonmark);
+            tv_marker.setTextColor(Color.WHITE);
+        } else {
+            tv_marker.setBackgroundResource(R.drawable.mark);
+            tv_marker.setTextColor(Color.BLACK);
+        }
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.title(Integer.toString(price));
+        markerOptions.position(position);
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(this, marker_root_view)));
+
+
+        return mGoogleMap.addMarker(markerOptions);
+
+    }
+
+    private void changeSelectedMarker(Marker marker) {
+        // 선택했던 마커 되돌리기
+        if (selectedMarker != null) {
+            addMarker(selectedMarker, false);
+            selectedMarker.remove();
+        }
+
+        // 선택한 마커 표시
+        if (marker != null) {
+            selectedMarker = addMarker(marker, true);
+            marker.remove();
+        }
+
+
+    }
+
+
 
 
     @Override
@@ -196,7 +267,8 @@ public class GoogleMapActivity extends AppCompatActivity
         //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에
         //지도의 초기위치를 서울로 이동
         setDefaultLocation();
-
+        setCustomMarkerView();
+        getSampleMarkerItems();
 
 
         //런타임 퍼미션 처리
@@ -254,12 +326,23 @@ public class GoogleMapActivity extends AppCompatActivity
 
             @Override
             public void onMapClick(LatLng latLng) {
-
-                Log.d( TAG, "onMapClick :");
+                changeSelectedMarker(null);
             }
         });
 
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
 
+                CameraUpdate center = CameraUpdateFactory.newLatLng(marker.getPosition());
+                mGoogleMap.animateCamera(center);
+
+                changeSelectedMarker(marker);
+
+                return true;
+
+            }
+        });
 
     }
 
@@ -298,7 +381,39 @@ public class GoogleMapActivity extends AppCompatActivity
         }
     }
 
+    private void getSampleMarkerItems() {
+        ArrayList<MarkerItem> sampleList = new ArrayList();
 
+
+        sampleList.add(new MarkerItem(37.538523, 126.96568, 2500000));
+        sampleList.add(new MarkerItem(37.527523, 126.96568, 100000));
+        sampleList.add(new MarkerItem(37.549523, 126.96568, 15000));
+        sampleList.add(new MarkerItem(37.538523, 126.95768, 5000));
+
+
+        for (MarkerItem markerItem : sampleList) {
+            addMarker(markerItem, false);
+        }
+
+    }
+
+
+    // View를 Bitmap으로 변환
+    private Bitmap createDrawableFromView(Context context, View view) {
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+
+        return bitmap;
+    }
 
 
     public String getCurrentAddress(LatLng latlng) {
@@ -363,7 +478,7 @@ public class GoogleMapActivity extends AppCompatActivity
         currentMarker = mGoogleMap.addMarker(markerOptions);
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentLatLng);
-        mGoogleMap.moveCamera(cameraUpdate);
+
 
     }
 
