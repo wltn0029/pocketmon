@@ -247,6 +247,10 @@ public class PocketmonGo extends AppCompatActivity {
     private File mImageFolder;
     private String mImageFileName;
 
+    private static int userAccountId;
+    private static boolean isFirstVisited;
+
+
     private static SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 0);
@@ -268,6 +272,10 @@ public class PocketmonGo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pocketmon_go);
+
+        Intent intent = getIntent();
+        userAccountId=intent.getIntExtra("userAccountID",0);
+        isFirstVisited = intent.getBooleanExtra("isFirstVisited",true);
 
         createVideoFolder();
         createImageFolder();
@@ -395,7 +403,7 @@ public class PocketmonGo extends AppCompatActivity {
                 CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
                 if(cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) ==
                         CameraCharacteristics.LENS_FACING_FRONT){
-                    continue;
+//                    continue;
                 }
                 StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                 int deviceOrientation = getWindowManager().getDefaultDisplay().getRotation();

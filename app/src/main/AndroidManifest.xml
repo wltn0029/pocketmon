@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature android:name="android.hardware.camera2.full" />
@@ -26,6 +27,9 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAjbbdWiqnLgxmp6jOmc_AN5GzKRw9NCXc" />
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
@@ -41,7 +45,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -54,10 +58,10 @@
         </provider>
         <!-- FullImageActivity -->
         <activity android:name=".FullImageActivity" />
-        <activity android:name=".PocketmonGo"
-            android:hardwareAccelerated="true">
-
-        </activity>
+        <activity
+            android:name=".PocketmonGo"
+            android:hardwareAccelerated="true"></activity>
+        <activity android:name=".GoogleMapActivity"></activity>
     </application>
 
 </manifest>
