@@ -77,7 +77,6 @@ public class ContactFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_contact, container, false);
         this.fragView = view;
-        CheckPermissionLoadContact();
         listview = (ListView) fragView.findViewById(R.id.listview);
         adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, MainActivity.items);
         listview.setAdapter(adapter);
@@ -85,6 +84,7 @@ public class ContactFragment extends Fragment {
         phoneText = (EditText) fragView.findViewById(R.id.phoneText);
         saveBtn = (Button) fragView.findViewById(R.id.saveBtn);
         synchroBtn = (Button)fragView.findViewById(R.id.synchroBtn);
+        CheckPermissionLoadContact();
 
         saveBtn.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -287,10 +287,11 @@ public class ContactFragment extends Fragment {
             postNewContact.start();
             while(!Check.containsKey("CS496_application_contact_test")){}
             Check.remove("CS496_application_contact_test");
-            ContactFragment.adapter.notifyDataSetChanged();
-            ContactFragment.listview.invalidateViews();
-            ContactFragment.listview.setAdapter(ContactFragment.adapter);
+            //ContactFragment.adapter.notifyDataSetChanged();
+            //ContactFragment.listview.invalidateViews();
+            //ContactFragment.listview.setAdapter(ContactFragment.adapter);
             //MainActivity.mViewPager.setCurrentItem(1, true);
+            ((MainActivity)getActivity()).loadContactFromServer();
         } else {
             Toast.makeText(getContext(), "Fill in the every blank!" ,Toast.LENGTH_SHORT).show();
         }

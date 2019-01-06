@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     public static BottomNavigationView mNavigation;
     public static ViewPager mViewPager;
-
+    public static int i;
 
     SharedPreferences sharedPreferences;
     HashSet<String> strImgSet;
@@ -538,6 +538,37 @@ public class MainActivity extends AppCompatActivity
                     pCur.close();
                 }
             }
+        }
+
+        int count = MainActivity.dataList.size();
+        for(i=0;i<count;i++) {
+            /**
+             * Call<Contact> postUserContact(
+             * *           @Path("userID")String userID,
+             *             @Field("id") String id,
+             *             @Field("phone_number") String phone_number,
+             *             @Field("name") String name,
+             *
+             *     );
+             */
+            final Call<Contact> call = RetrofitClient.getInstacne().getApi().postUserContact(String.valueOf(MainActivity.userAccountId),
+                                                                                                            MainActivity.dataList.get(i).getPhone_number(),
+                                                                                                            MainActivity.dataList.get(i).getName());
+            Check = new HashMap<String,String>();
+            Thread postNewUserContact = new Thread(){
+                @Override
+                public void run(){
+                    try{
+                        call.execute();
+                        Check.put("CS496_application_post_contact_first_test"+String.valueOf(i),"DONE");
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            };
+            postNewUserContact.start();
+            while(!Check.containsKey("CS496_application_post_contact_first_test"+String.valueOf(i))){}
+            Check.remove("CS496_application_contact_first_test"+String.valueOf(i));
         }
 
         ContactFragment.adapter.notifyDataSetChanged();
