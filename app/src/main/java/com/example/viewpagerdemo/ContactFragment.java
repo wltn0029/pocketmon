@@ -151,7 +151,7 @@ public class ContactFragment extends Fragment {
     public void CheckPermissionLoadContact(){
         if(getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             Log.i("***PERMISSION", "Got ContactPermission");
-            if (MainActivity.isFristVisited) {
+            if (MainActivity.isFirstVisited) {
                 ((MainActivity) getActivity()).loadContacts();
             }
         }
@@ -196,7 +196,7 @@ public class ContactFragment extends Fragment {
 
     public void synchroWithServer(){
         //when user visit app first
-        if(MainActivity.isFristVisited){
+        if(MainActivity.isFirstVisited){
 
         }else{
             ((MainActivity)getActivity()).loadContactFromServer();

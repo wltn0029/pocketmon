@@ -220,10 +220,10 @@ public class GoogleMapActivity extends AppCompatActivity
         tv_marker.setText(formatted);
 
         if (isSelectedMarker) {
-            tv_marker.setBackgroundResource(R.drawable.nonmark);
+            tv_marker.setBackgroundResource(R.drawable.mark);
             tv_marker.setTextColor(Color.WHITE);
         } else {
-            tv_marker.setBackgroundResource(R.drawable.mark);
+            tv_marker.setBackgroundResource(R.drawable.nonmark);
             tv_marker.setTextColor(Color.BLACK);
         }
 

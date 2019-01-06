@@ -2,14 +2,18 @@ package com.example.viewpagerdemo;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.CursorJoiner;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -23,7 +27,26 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.transform.Result;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+
+import static com.example.viewpagerdemo.MainActivity.dataList;
 
 
 public class GalleryFragment extends Fragment {
@@ -38,6 +61,7 @@ public class GalleryFragment extends Fragment {
     boolean isOpen = false;
     private int type;
     private OnFragmentInteractionListener mListener;
+    public static Map<String,String> Check;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -139,6 +163,18 @@ public class GalleryFragment extends Fragment {
             }
         });
 
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getContext(), "long click !", Toast.LENGTH_SHORT).show();
+                String stringUri = ImageAdapter.imageList.get(position).getPath();
+                Log.d(">>>>>>>>>uri",stringUri);
+                ImageToServer(MainActivity.userAccountId, stringUri);
+                Toast.makeText(getContext(), "image goes to server!!! !", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
         ((MainActivity)getActivity()).restoreFromBundle(savedInstanceState);
 
         return view;
@@ -202,5 +238,41 @@ public class GalleryFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void ImageToServer(int userAccountId, String uri){
+        File file = new File(uri);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        RequestBody id = RequestBody.create(MediaType.parse("test/plain"), String.valueOf(userAccountId));
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+        final Call<ResponseBody> call = RetrofitClient.getInstacne().getApi().upload(String.valueOf(userAccountId),file);
+        Check = new HashMap<String,String>();
+        Thread getContactThread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    ResponseBody response =call.execute().body();
+                    Log.d("userContact>>>>>>>>>>>",response.toString());
+                    Check.put("CS496_application_result_test","DONE");
+                }catch(Exception e){
+                    Log.d("RETROFIT>>>>>", "Error in getting all contacts : " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        getContactThread.start();
+        while(!Check.containsKey("CS496_application_result_test")){}
+        Check.remove("CS496_application_result_test");
+      /*String sb = HttpConnection.GetAllContacts(String.valueOf(userAccountId));
+      Gson gson = new Gson();
+      Type type = new TypeToken<List<Contact>>(){}.getType();
+      List<Contact> FromServerContacts = gson.fromJson(sb,type);
+      for(int i=0;i<FromServerContacts.size();i++){
+          String name = FromServerContacts.get(i).getName();
+          String pn = FromServerContacts.get(i).getPhone_number();
+          String listitem = name+": "+pn;
+          items.add(listitem);
+      }*/
     }
 }
