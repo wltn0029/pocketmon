@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
     public static String contactName;
     public static String contactPhone;
     public static int userAccountId;
-    public static boolean isFristVisited;
+    public static boolean isFirstVisited;
 
     // FOR PERMISSION
 
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         userAccountId=Integer.valueOf(intent.getExtras().getString("userAccountID"));
-        isFristVisited = intent.getExtras().getBoolean("isFirstVisited");
+        isFirstVisited = intent.getExtras().getBoolean("isFirstVisited");
         Toast.makeText(this,String.valueOf(userAccountId),Toast.LENGTH_SHORT).show();
 
         items = new ArrayList<String>();

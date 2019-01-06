@@ -153,14 +153,30 @@ public class CardFragment extends Fragment {
         loadAnimations();
         changeCameraDistance();
 
-        captureBtn = (Button) fragView.findViewById(R.id.capture);
-        captureBtn.setOnClickListener(new Button.OnClickListener() {
+        shareBtn = (Button) fragView.findViewById(R.id.pocketmon);
+        shareBtn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                takeScreenshot();
+                Intent intent2 = new Intent(getActivity(), PocketmonGo.class);
+                //account_id = 계정 아이디
+                Log.d("?>>>>>>>>>>>>>",MainActivity.userAccountId+"");
+                intent2.putExtra("userAccountId", MainActivity.userAccountId);
+                intent2.putExtra("isFirstVisited",MainActivity.isFirstVisited);
+                getActivity().startActivity(intent2);
             }
         });
 
+        captureBtn = fragView.findViewById(R.id.capture);
+        captureBtn.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(getActivity(),GoogleMapActivity.class);
+                intent.putExtra("userAccountId", MainActivity.userAccountId);
+                intent.putExtra("isFirstVisited",MainActivity.isFirstVisited);
+                getActivity().startActivity(intent);
+
+            }
+        });
         storageBtn = (Button) fragView.findViewById(R.id.storage);
         storageBtn.setOnClickListener(new Button.OnClickListener() {
             @Override
