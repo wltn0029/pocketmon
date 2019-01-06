@@ -25,9 +25,9 @@ public interface Api {
     );
 
     @FormUrlEncoded
-    @POST("contact/{userID}/")
+    @POST("contact/")
     Call<Contact> postUserContact(
-            @Field("userID") String userID,
+            @Field("id") String userID,
             @Field("phone_number") String phone_number,
             @Field("name") String name
     );
