@@ -592,7 +592,7 @@ public class MainActivity extends AppCompatActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Log.i("***PERMISSION","Got ContactPermission");
-                    if(isFristVisited){loadContacts(); }
+                    if(isFirstVisited){loadContacts(); }
                     else {loadContactFromServer();}
                 } else {
                     // permission denied, boo! Disable the

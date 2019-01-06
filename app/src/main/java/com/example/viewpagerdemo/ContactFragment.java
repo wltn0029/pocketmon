@@ -151,7 +151,7 @@ public class ContactFragment extends Fragment {
     public void CheckPermissionLoadContact(){
         if(getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             Log.i("***PERMISSION", "Got ContactPermission");
-            if (MainActivity.isFristVisited) {
+            if (MainActivity.isFirstVisited) {
                 ((MainActivity) getActivity()).loadContacts();
             }
         }
@@ -196,13 +196,15 @@ public class ContactFragment extends Fragment {
 
     public void synchroWithServer(){
         //when user visit app first
-        if(MainActivity.isFristVisited){
+        if(MainActivity.isFirstVisited){
 
         }else{
             ((MainActivity)getActivity()).loadContactFromServer();
         }
     }
+    public void uploadContact(){
 
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -225,6 +227,7 @@ public class ContactFragment extends Fragment {
 
         if(((nameText.getText().length() > 0) && (phoneText.getText().length() > 0)) ){
             Toast.makeText(getContext(), nameText.getText() + " " + phoneText.getText() ,Toast.LENGTH_SHORT).show();
+            MainActivity.items.add(nameText.getText().toString()+": "+phoneText.getText().toString());
 
             MainActivity.contactName = nameText.getText().toString();
             MainActivity.contactPhone = phoneText.getText().toString();
