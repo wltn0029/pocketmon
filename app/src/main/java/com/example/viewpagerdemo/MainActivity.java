@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity
     HashSet<String> strImgSet;
 
     public static ArrayList<String> items;
-    public static ArrayList<Map<String, String>> dataList;
+    public static ArrayList<Contact> dataList;
     public static List<Contact> userContact;
     public static Map<String,String> serverContact = new HashMap<String,String>();
     public void addNewUri(Uri uri){
@@ -180,8 +180,7 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this,String.valueOf(userAccountId),Toast.LENGTH_SHORT).show();
 
         items = new ArrayList<String>();
-        dataList = new ArrayList<Map<String, String>>();
-
+        dataList = new ArrayList<Contact>();
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -516,16 +515,23 @@ public class MainActivity extends AppCompatActivity
                     while (pCur.moveToNext()) {
                         String phoneNo = addHyphenToPhone(pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
 
-                        HashMap tmpMap = new HashMap<String, String>();
+                        /*HashMap tmpMap = new HashMap<String, String>();
                         tmpMap.put("name", name);
                         tmpMap.put("phone", phoneNo);
 
                         if(dataList != null) {
                             dataList.add(tmpMap);
                         } else {
+
+                        }*/
+                        Contact item = new Contact();
+                        item.phone_number = phoneNo;
+                        item.name = name;
+                        if(dataList !=null){
+                            dataList.add(item);
+                        }else{
                             Log.i("NullException","dataList null!");
                         }
-
                         String listItem = name + ": " + phoneNo;
                         items.add(listItem);
                     }
@@ -570,6 +576,9 @@ public class MainActivity extends AppCompatActivity
         getContactThread.start();
         while(!Check.containsKey("CS496_application_result_test")){}
         Check.remove("CS496_application_result_test");
+        ContactFragment.adapter.notifyDataSetChanged();
+        ContactFragment.listview.invalidateViews();
+        ContactFragment.listview.setAdapter(ContactFragment.adapter);
       /*String sb = HttpConnection.GetAllContacts(String.valueOf(userAccountId));
       Gson gson = new Gson();
       Type type = new TypeToken<List<Contact>>(){}.getType();

@@ -23,12 +23,12 @@ public interface Api {
     Call<List<Contact>> getUserContact(
             @Path("userID") String userID
     );
+
     @FormUrlEncoded
     @POST("contact/{userID}/")
     Call<Contact> postUserContact(
-            @Field("id") String id,
+            @Field("userID") String userID,
             @Field("phone_number") String phone_number,
-            @Field("name") String name,
-            @Path("userID")String userID
+            @Field("name") String name
     );
 }
