@@ -5,6 +5,7 @@ public class Contact {
     String name;
     String phone_number;
     String account;
+
     //getter/setter
     public String getId() {return id;}
     public void setId(String mid){

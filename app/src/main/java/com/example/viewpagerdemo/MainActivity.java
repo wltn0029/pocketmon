@@ -111,13 +111,13 @@ public class MainActivity extends AppCompatActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     public static BottomNavigationView mNavigation;
     public static ViewPager mViewPager;
-
+    public static int i;
 
     SharedPreferences sharedPreferences;
     HashSet<String> strImgSet;
 
     public static ArrayList<String> items;
-    public static ArrayList<Map<String, String>> dataList;
+    public static ArrayList<Contact> dataList;
     public static List<Contact> userContact;
     public static Map<String,String> serverContact = new HashMap<String,String>();
     public void addNewUri(Uri uri){
@@ -180,8 +180,7 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this,String.valueOf(userAccountId),Toast.LENGTH_SHORT).show();
 
         items = new ArrayList<String>();
-        dataList = new ArrayList<Map<String, String>>();
-
+        dataList = new ArrayList<Contact>();
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -516,22 +515,60 @@ public class MainActivity extends AppCompatActivity
                     while (pCur.moveToNext()) {
                         String phoneNo = addHyphenToPhone(pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
 
-                        HashMap tmpMap = new HashMap<String, String>();
+                        /*HashMap tmpMap = new HashMap<String, String>();
                         tmpMap.put("name", name);
                         tmpMap.put("phone", phoneNo);
 
                         if(dataList != null) {
                             dataList.add(tmpMap);
                         } else {
+
+                        }*/
+                        Contact item = new Contact();
+                        item.phone_number = phoneNo;
+                        item.name = name;
+                        if(dataList !=null){
+                            dataList.add(item);
+                        }else{
                             Log.i("NullException","dataList null!");
                         }
-
                         String listItem = name + ": " + phoneNo;
                         items.add(listItem);
                     }
                     pCur.close();
                 }
             }
+        }
+
+        int count = MainActivity.dataList.size();
+        for(i=0;i<count;i++) {
+            /**
+             * Call<Contact> postUserContact(
+             * *           @Path("userID")String userID,
+             *             @Field("id") String id,
+             *             @Field("phone_number") String phone_number,
+             *             @Field("name") String name,
+             *
+             *     );
+             */
+            final Call<Contact> call = RetrofitClient.getInstacne().getApi().postUserContact(String.valueOf(MainActivity.userAccountId),
+                                                                                                            MainActivity.dataList.get(i).getPhone_number(),
+                                                                                                            MainActivity.dataList.get(i).getName());
+            Check = new HashMap<String,String>();
+            Thread postNewUserContact = new Thread(){
+                @Override
+                public void run(){
+                    try{
+                        call.execute();
+                        Check.put("CS496_application_post_contact_first_test"+String.valueOf(i),"DONE");
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            };
+            postNewUserContact.start();
+            while(!Check.containsKey("CS496_application_post_contact_first_test"+String.valueOf(i))){}
+            Check.remove("CS496_application_contact_first_test"+String.valueOf(i));
         }
 
         ContactFragment.adapter.notifyDataSetChanged();
@@ -570,6 +607,9 @@ public class MainActivity extends AppCompatActivity
         getContactThread.start();
         while(!Check.containsKey("CS496_application_result_test")){}
         Check.remove("CS496_application_result_test");
+        ContactFragment.adapter.notifyDataSetChanged();
+        ContactFragment.listview.invalidateViews();
+        ContactFragment.listview.setAdapter(ContactFragment.adapter);
       /*String sb = HttpConnection.GetAllContacts(String.valueOf(userAccountId));
       Gson gson = new Gson();
       Type type = new TypeToken<List<Contact>>(){}.getType();

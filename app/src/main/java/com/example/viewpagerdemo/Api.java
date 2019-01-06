@@ -28,13 +28,13 @@ public interface Api {
     Call<List<Contact>> getUserContact(
             @Path("userID") String userID
     );
+
     @FormUrlEncoded
-    @POST("contact/{userID}/")
+    @POST("contact/")
     Call<Contact> postUserContact(
-            @Field("id") String id,
+            @Field("id") String userID,
             @Field("phone_number") String phone_number,
-            @Field("name") String name,
-            @Path("userID")String userID
+            @Field("name") String name
     );
     @Multipart
     @POST("image/")
