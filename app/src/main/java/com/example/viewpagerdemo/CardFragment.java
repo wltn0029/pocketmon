@@ -157,10 +157,12 @@ public class CardFragment extends Fragment {
         captureBtn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(this, PocketmonGo.class);
+                Intent intent2 = new Intent(getActivity(), PocketmonGo.class);
                 //account_id = 계정 아이디
-                intent.putExtra("acoount_id", message);
-                startActivity(intent);
+                Log.d("?>>>>>>>>>>>>>",MainActivity.userAccountId+"");
+                intent2.putExtra("userAccountId", MainActivity.userAccountId);
+                intent2.putExtra("isFirstVisited",MainActivity.isFirstVisited);
+                getActivity().startActivity(intent2);
             }
         });
 

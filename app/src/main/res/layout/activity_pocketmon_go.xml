@@ -3,38 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.example.viewpagerdemo">
+
     <TextureView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/texture"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_takepicture"
-        android:layout_alignParentTop="true"/>
-    <Button
-        android:id="@+id/btn_takepicture"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/videoOnlineImageButton"
+        android:layout_marginBottom="36dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"/>
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btn_takepicture"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="30dp"
-        android:text="Button" />
+        android:layout_marginEnd="49dp" />
 
-    <Button
-        android:id="@+id/button4"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btn_takepicture"
+        android:id="@+id/cameraImageButton2"
+        android:layout_alignTop="@+id/videoOnlineImageButton"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="30dp"
-        android:text="Button" />
+        android:layout_marginStart="57dp" />
+
+    <Chronometer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chronometer"
+        android:visibility="invisible"
+        android:textColor="#ff0000"
+        android:textSize="25dp"
+        android:layout_above="@+id/videoOnlineImageButton"
+        android:layout_alignStart="@+id/videoOnlineImageButton" />
+
 </RelativeLayout>
