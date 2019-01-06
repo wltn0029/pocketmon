@@ -103,12 +103,12 @@
         app:layout_constraintVertical_bias="0.902" />
 
     <Button
-        android:id="@+id/syncroBtn"
+        android:id="@+id/synchroBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="16dp"
-        android:text="Syncro"
+        android:text="Synchro"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -41,6 +41,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -49,12 +53,16 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity
         implements ContactFragment.OnFragmentInteractionListener,
@@ -96,7 +104,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private static String imageStoragePath;
-
+    public static Map<String,String> Check;
     //////////////////////////
 
 
@@ -110,7 +118,8 @@ public class MainActivity extends AppCompatActivity
 
     public static ArrayList<String> items;
     public static ArrayList<Map<String, String>> dataList;
-
+    public static List<Contact> userContact;
+    public static Map<String,String> serverContact = new HashMap<String,String>();
     public void addNewUri(Uri uri){
         ImageAdapter.imageList.add(0,uri);
         strImgSet.add(uri.toString());
@@ -163,7 +172,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-       setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
         userAccountId=Integer.valueOf(intent.getExtras().getString("userAccountID"));
@@ -518,7 +527,6 @@ public class MainActivity extends AppCompatActivity
                         }
 
                         String listItem = name + ": " + phoneNo;
-
                         items.add(listItem);
                     }
                     pCur.close();
@@ -532,6 +540,48 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public void loadContactFromServer(){
+        dataList.clear();
+        items.clear();
+        final Call<List<Contact>> call = RetrofitClient.getInstacne().getApi().getUserContact(String.valueOf(userAccountId));
+        Check = new HashMap<String,String>();
+        Thread getContactThread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    userContact=call.execute().body();
+                    Log.d("userContact>>>>>>>>>>>",userContact.toString());
+                    for(int i=0;i<userContact.size();i++){
+                        String name = userContact.get(i).getName();
+                        String pn = userContact.get(i).getPhone_number();
+                        Log.d(">>>>>>>>>>>>>>>>","name: "+name);
+                        //to show contact stored in user account
+                        String listItem = name+": "+pn;
+                        items.add(listItem);
+                    }
+                    Check.put("CS496_application_result_test","DONE");
+                }catch(Exception e){
+                    Log.d("RETROFIT>>>>>", "Error in getting all contacts : " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        getContactThread.start();
+        while(!Check.containsKey("CS496_application_result_test")){}
+        Check.remove("CS496_application_result_test");
+      /*String sb = HttpConnection.GetAllContacts(String.valueOf(userAccountId));
+      Gson gson = new Gson();
+      Type type = new TypeToken<List<Contact>>(){}.getType();
+      List<Contact> FromServerContacts = gson.fromJson(sb,type);
+      for(int i=0;i<FromServerContacts.size();i++){
+          String name = FromServerContacts.get(i).getName();
+          String pn = FromServerContacts.get(i).getPhone_number();
+          String listitem = name+": "+pn;
+          items.add(listitem);
+      }*/
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -542,7 +592,8 @@ public class MainActivity extends AppCompatActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Log.i("***PERMISSION","Got ContactPermission");
-                    loadContacts();
+                    if(isFristVisited){loadContacts(); }
+                    else {loadContactFromServer();}
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.

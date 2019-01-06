@@ -35,7 +35,7 @@ public class ContactFragment extends Fragment {
     EditText phoneText;
 
     Button saveBtn;
-    Button syncroBtn;
+    Button synchroBtn;
 
     public static ArrayAdapter adapter;
 
@@ -44,7 +44,7 @@ public class ContactFragment extends Fragment {
     SoftKeyboard softKeyboard;
     ConstraintLayout constraintLayout;
 
-    private OnFragmentInteractionListener mListener;
+    private CardFragment.OnFragmentInteractionListener mListener;
 
     public ContactFragment() {
         // Required empty public constructor
@@ -71,26 +71,28 @@ public class ContactFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_contact, container, false);
         this.fragView = view;
+        CheckPermissionLoadContact();
         listview = (ListView) fragView.findViewById(R.id.listview);
         adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, MainActivity.items);
         listview.setAdapter(adapter);
 
-        CheckPermissionLoadContact();
-
-
         nameText = (EditText) fragView.findViewById(R.id.nameText);
         phoneText = (EditText) fragView.findViewById(R.id.phoneText);
         saveBtn = (Button) fragView.findViewById(R.id.saveBtn);
-        syncroBtn = (Button)fragView.findViewById(R.id.syncroBtn);
+        synchroBtn = (Button)fragView.findViewById(R.id.synchroBtn);
 
         saveBtn.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 onClickSaveBtn();
             }
         });
+        synchroBtn.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v ){
+                synchroWithServer();
+            }
+        });
 
-
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      /* listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (-1 < position && position < adapter.getCount()) {
@@ -102,7 +104,7 @@ public class ContactFragment extends Fragment {
                     Log.i("Error", "ITEM DOES NOT EXIST!");
                 }
             }
-        });
+        });*/
         constraintLayout = (ConstraintLayout) fragView.findViewById(R.id.contactlayout);
 
         InputMethodManager controlManager = (InputMethodManager)getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
@@ -149,7 +151,9 @@ public class ContactFragment extends Fragment {
     public void CheckPermissionLoadContact(){
         if(getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             Log.i("***PERMISSION", "Got ContactPermission");
-            ((MainActivity) getActivity()).loadContacts();
+            if (MainActivity.isFristVisited) {
+                ((MainActivity) getActivity()).loadContacts();
+            }
         }
         else{
             Log.i("***PERMISSION","Try to get ContactPermission");
@@ -176,8 +180,8 @@ public class ContactFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof CardFragment.OnFragmentInteractionListener) {
+            mListener = (CardFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -188,6 +192,15 @@ public class ContactFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void synchroWithServer(){
+        //when user visit app first
+        if(MainActivity.isFristVisited){
+
+        }else{
+            ((MainActivity)getActivity()).loadContactFromServer();
+        }
     }
 
     /**
@@ -218,7 +231,7 @@ public class ContactFragment extends Fragment {
 
             MainActivity.mViewPager.setCurrentItem(1, true);
         } else {
-            Toast.makeText(getContext(), "Fill every blank" ,Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Fill in the every blank!" ,Toast.LENGTH_SHORT).show();
         }
     }
 }

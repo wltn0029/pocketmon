@@ -25,8 +25,9 @@ public class HttpConnection {
 
     private static String defaultURL = "http://143.248.140.251:9380";
 
-    public static String GetAllContacts(){
+    public static String GetAllContacts(String account){
         final StringBuilder sb = new StringBuilder();
+        final String id = account;
         Thread sendHttpRequestThread = new Thread() {
             @Override
             public void run(){
@@ -37,7 +38,7 @@ public class HttpConnection {
                 BufferedReader bufReader = null;
                 try {
                     // Set URL to get all contacts
-                    URL url = new URL(defaultURL + "/contact");
+                    URL url = new URL(defaultURL + "/contact/"+id+"/");
                     // Open HttpURLConnection of the URL and set method & timeout
                     httpConnection = (HttpURLConnection) url.openConnection();
                     httpConnection.setRequestMethod("GET");

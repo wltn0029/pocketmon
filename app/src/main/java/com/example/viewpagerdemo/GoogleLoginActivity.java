@@ -55,7 +55,7 @@ public class GoogleLoginActivity extends Activity {
     private static ProgressDialog dialog;
     private String reply="";
     public Map<String,String> result;
-    int id;
+    int userid;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -91,19 +91,19 @@ public class GoogleLoginActivity extends Activity {
                 Log.d(">>>>>>>>>>>>>>>",2+"");
                 System.out.println("reply : " + responseStr);
                 JsonElement element = parser.parse(responseStr);
-                id = element.getAsJsonObject().get("pk").getAsInt();
+                userid = element.getAsJsonObject().get("pk").getAsInt();
                 Log.d(">>>>>>>>>>>>>","responseStr : "+reply);
-                Log.d(">>>>>>>>>>>>>>>",String.valueOf(id),null);
+                Log.d(">>>>>>>>>>>>>>>",String.valueOf(userid),null);
                 firstVisited = element.getAsJsonObject().get("is_first").getAsBoolean();
             }catch(Exception e){
                 e.printStackTrace();
             }
             //Log.d("id:",String.valueOf(id));
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("userAccountID", String.valueOf(id));
+            intent.putExtra("userAccountID", String.valueOf(userid));
             intent.putExtra("isFirstVisited",firstVisited);
             Log.d(">>>>>>>>>>>>>>>tag",3+"");
-            Log.d(">>>>>>>>>>>>>>>", "id:"+id+"firstvisited"+String.valueOf(firstVisited));
+            Log.d(">>>>>>>>>>>>>>>", "id:"+userid+"firstvisited"+String.valueOf(firstVisited));
             startActivity(intent);
         }
     }
@@ -163,15 +163,15 @@ public class GoogleLoginActivity extends Activity {
                 JsonElement element = parser.parse(responseStr);
                 System.out.println("element : " + element);
                 Log.d(">>>>>>>>>>>>>","responseStr : "+responseStr);
-                id = element.getAsJsonObject().get("pk").getAsInt();
+                userid = element.getAsJsonObject().get("pk").getAsInt();
                 firstVisited = element.getAsJsonObject().get("is_first").getAsBoolean();
             }catch(Exception e){
                 e.printStackTrace();
             }
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("userAccountID", String.valueOf(id));
+            intent.putExtra("userAccountID", String.valueOf(userid));
             intent.putExtra("isFirstVisited",firstVisited);
-            Log.d(">>>>>>>>>>>>>>>", "id:"+id+"firstvisited"+String.valueOf(firstVisited));
+            Log.d(">>>>>>>>>>>>>>>", "id:"+userid+"firstvisited"+String.valueOf(firstVisited));
             startActivity(intent);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
