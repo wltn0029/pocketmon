@@ -52,12 +52,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
+
 import static android.view.View.VISIBLE;
 
 
 public class CardFragment extends Fragment {
 
     protected View fragView;
+    private EditText edittext;
     protected Context fragContext;
 
     private RecyclerView recyclerView;
@@ -108,10 +116,6 @@ public class CardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        } else {
-        }
     }
 
     @Override
@@ -123,82 +127,15 @@ public class CardFragment extends Fragment {
         this.fragView = view;
         this.fragContext = getContext();
 
-
-        layoutManager = new GridLayoutManager(fragContext, 1, GridLayoutManager.HORIZONTAL, false);
-
-        recyclerView = (RecyclerView) fragView.findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-
-        adapter = new RecyclerAdapter(images);
-        recyclerView.setAdapter(adapter);
-        findViews();
-        selectImage = mCardFrontLayout.findViewById(R.id.cardImage);
-        nameCard = mCardFrontLayout.findViewById(R.id.nameCard);
-        phoneCard = mCardFrontLayout.findViewById(R.id.phoneCard);
-        addressCard = mCardFrontLayout.findViewById(R.id.addressCard);
-        userImage = mCardBackLayout.findViewById(R.id.userImage);
-        userVideo = mCardBackLayout.findViewById(R.id.userVideo);
-        setCardText();
-        setUserImage();
-        adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                selectImage = mCardFrontLayout.findViewById(R.id.cardImage);
-                Glide.with(fragContext).load(images[position]).into(selectImage);
-                selectImage.setVisibility(VISIBLE);
-            }
-        });
-
-        loadAnimations();
-        changeCameraDistance();
-
-        shareBtn = (Button) fragView.findViewById(R.id.pocketmon);
-        shareBtn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent2 = new Intent(getActivity(), PocketmonGo.class);
-                //account_id = 계정 아이디
-                Log.d("?>>>>>>>>>>>>>",MainActivity.userAccountId+"");
-                intent2.putExtra("userAccountId", MainActivity.userAccountId);
-                intent2.putExtra("isFirstVisited",MainActivity.isFirstVisited);
-                getActivity().startActivity(intent2);
-            }
-        });
-
-        captureBtn = fragView.findViewById(R.id.capture);
-        captureBtn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view){
-                Intent intent = new Intent(getActivity(),GoogleMapActivity.class);
-                intent.putExtra("userAccountId", MainActivity.userAccountId);
-                intent.putExtra("isFirstVisited",MainActivity.isFirstVisited);
-                getActivity().startActivity(intent);
-
-            }
-        });
-        storageBtn = (Button) fragView.findViewById(R.id.storage);
-        storageBtn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.sec.android.app.myfiles");
-                if (launchIntent != null) {
-                    startActivity(launchIntent); //null pointer check in case package name was not found
-                } else {
-                    Toast.makeText(fragContext, "File manager unavailable", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        relativeLayout = fragView.findViewById(R.id.relativeLayout);
-        relativeLayout.setOnClickListener(new View.OnClickListener() {
+        edittext=(EditText)view.findViewById(R.id.edittext);
+        Button button=(Button)view.findViewById(R.id.pocketmon);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(strUri!=null&&(strUri.contains("jpg")||strUri.contains("media"))){
-                    userImage.setVisibility(VISIBLE);
-                }
-                flipCard();
+                Intent intent = new Intent(getActivity(), GameListActivity.class);
+                intent.putExtra("userAccountID", String.valueOf(MainActivity.userAccountId));
+                intent.putExtra("name",edittext.getText());
+                startActivity(intent);
             }
         });
         return view;
@@ -216,10 +153,6 @@ public class CardFragment extends Fragment {
         mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(fragContext, R.animator.in_animation);
     }
 
-    private void findViews() {
-        mCardBackLayout = fragView.findViewById(R.id.card_back);
-        mCardFrontLayout = fragView.findViewById(R.id.card_front);
-    }
 
     public void flipCard() {
         if (!mIsBackVisible) {
