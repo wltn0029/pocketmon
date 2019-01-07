@@ -30,8 +30,11 @@ import android.widget.Toast;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -167,7 +170,7 @@ public class GalleryFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getContext(), "long click !", Toast.LENGTH_SHORT).show();
-                String stringUri = ImageAdapter.imageList.get(position).getPath();
+                String stringUri = ImageAdapter.imageList.get(position).toString();
                 Log.d(">>>>>>>>>uri",stringUri);
                 ImageToServer(MainActivity.userAccountId, stringUri);
                 Toast.makeText(getContext(), "image goes to server!!! !", Toast.LENGTH_SHORT).show();
@@ -241,11 +244,27 @@ public class GalleryFragment extends Fragment {
     }
 
     public void ImageToServer(int userAccountId, String uri){
-        File file = new File(uri);
+        Log.d(">>>>>>>>>>>image to file","1");
+        File file = new File(Uri.parse(uri).getPath());
+        Log.d(">>>>>>>>>>>image to file","2");
+        byte[] bytesArray = new byte[(int) file.length()];
+        try{
+            FileInputStream fis = new FileInputStream(file);
+            fis.read(bytesArray); //read file into bytes[]
+            fis.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         RequestBody id = RequestBody.create(MediaType.parse("test/plain"), String.valueOf(userAccountId));
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-        final Call<ResponseBody> call = RetrofitClient.getInstacne().getApi().upload(String.valueOf(userAccountId),file);
+        String string = Arrays.toString(bytesArray);
+        Map<String, RequestBody> map = new HashMap<>();
+        Log.d(">>>>>>>>>>>image to file","3");
+        map.put("Id", id);
+        map.put("file", requestFile);
+        final Call<ResponseBody> call = RetrofitClient.getInstacne().getApi().upload(body,map);
         Check = new HashMap<String,String>();
         Thread getContactThread = new Thread(){
             @Override

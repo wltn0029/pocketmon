@@ -367,6 +367,7 @@ public class MainActivity extends AppCompatActivity
             if(resultCode == RESULT_OK) {
                 // Refreshing the gallery
                 CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
+                Log.d(">>>>>>>>imagestoragepath",imageStoragePath);
                 // successfully captured the image
                 // display it in image view
                 previewCapturedImage();
@@ -405,6 +406,7 @@ public class MainActivity extends AppCompatActivity
             if (data != null) {
                 try {
                     Uri imageUri = data.getData();
+                    Log.d(">>>>>>>>>>>>imageUri request",imageUri.getPath());
                     addNewUri(imageUri);
                 } catch (Exception e) {
                     e.printStackTrace();
