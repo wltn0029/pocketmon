@@ -24,7 +24,7 @@ import java.io.File;
 public class FullImageActivity extends Activity {
     Button selbtn;
     Button reselbtn;
-
+    public static ImageView imageView;
     @Override
     public void onCreate(Bundle savedInstancestate){
         super.onCreate(savedInstancestate);
@@ -37,7 +37,7 @@ public class FullImageActivity extends Activity {
         Log.i("FULL IMAGE BITMAP", String.valueOf(position));
         ContentResolver cR = getApplicationContext().getContentResolver();
 
-        ImageView imageView = (ImageView) findViewById(R.id.imgPreview);
+        imageView = (ImageView) findViewById(R.id.imgPreview);
         VideoView videoView = (VideoView) findViewById(R.id.videoPreview);
         final String strImgUri = i.getExtras().getString("imgUri");
         selbtn = (Button)findViewById(R.id.selectbtn);

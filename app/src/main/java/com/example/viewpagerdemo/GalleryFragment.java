@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.CursorJoiner;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -25,11 +26,15 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
@@ -41,12 +46,17 @@ import javax.xml.transform.Result;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
 import static com.example.viewpagerdemo.MainActivity.dataList;
+import static com.example.viewpagerdemo.MainActivity.userAccountId;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class GalleryFragment extends Fragment {
@@ -62,7 +72,7 @@ public class GalleryFragment extends Fragment {
     private int type;
     private OnFragmentInteractionListener mListener;
     public static Map<String,String> Check;
-
+    Bitmap mBitmap;
     public GalleryFragment() {
         // Required empty public constructor
     }
@@ -89,7 +99,8 @@ public class GalleryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
         this.fragView = view;
         this.fragContext = getContext();
-
+        ImageView imageView = FullImageActivity.imageView;
+        mBitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
         fab1 = (FloatingActionButton) fragView.findViewById(R.id.fab1);
         fab2 = (FloatingActionButton) fragView.findViewById(R.id.fab2);
         fab3 = (FloatingActionButton) fragView.findViewById(R.id.fab3);
@@ -169,7 +180,7 @@ public class GalleryFragment extends Fragment {
                 Toast.makeText(getContext(), "long click !", Toast.LENGTH_SHORT).show();
                 String stringUri = ImageAdapter.imageList.get(position).getPath();
                 Log.d(">>>>>>>>>uri",stringUri);
-                ImageToServer(MainActivity.userAccountId, stringUri);
+                multipartImageUpload(stringUri);
                 Toast.makeText(getContext(), "image goes to server!!! !", Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -240,8 +251,12 @@ public class GalleryFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void ImageToServer(int userAccountId, String uri){
-        File file = new File(uri);
+    //public void ImageToServer(int userAccountId, String uri){
+        //OkHttpClient client = new OkHttpClient.Builder().build();
+        //Retrofit apiService = new Retrofit.Builder().baseUrl("http://143.248.140.251:9380/").client(client).build().create(Api.class);
+
+
+      /* File file = new File(uri);
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         RequestBody id = RequestBody.create(MediaType.parse("test/plain"), String.valueOf(userAccountId));
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
@@ -274,5 +289,49 @@ public class GalleryFragment extends Fragment {
           String listitem = name+": "+pn;
           items.add(listitem);
       }*/
-    }
+  // }
+      private void multipartImageUpload(String uri) {
+          try {
+              //File filesDir = getApplicationContext().getFilesDir();
+
+              File filesDir = new File(uri);
+              ByteArrayOutputStream bos = new ByteArrayOutputStream();
+              mBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+              byte[] bitmapdata = bos.toByteArray();
+
+
+              FileOutputStream fos = new FileOutputStream(filesDir);
+              fos.write(bitmapdata);
+              fos.flush();
+              fos.close();
+
+
+              RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), filesDir);
+              MultipartBody.Part body = MultipartBody.Part.createFormData("upload", filesDir.getName(), reqFile);
+              RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload");
+
+              final Call<ResponseBody> req = RetrofitClient.getInstacne().getApi().upload(String.valueOf(MainActivity.userAccountId),body);
+              Check = new HashMap<String,String>();
+              Thread uploadImage = new Thread(){
+                  @Override
+                  public void run(){
+                      try{
+                          req.execute();
+                          Check.put("CS469_application_image_test","DONE");
+                      }catch (Exception e){
+                          e.printStackTrace();
+                      }
+                  }
+              };
+              uploadImage.start();
+              while(!Check.containsKey("CS469_application_image_test")){}
+              Check.remove("CS469_application_image_test");
+
+
+          } catch (FileNotFoundException e) {
+              e.printStackTrace();
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
+      }
 }

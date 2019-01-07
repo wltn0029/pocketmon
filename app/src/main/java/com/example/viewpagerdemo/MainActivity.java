@@ -574,7 +574,6 @@ public class MainActivity extends AppCompatActivity
         ContactFragment.adapter.notifyDataSetChanged();
         ContactFragment.listview.invalidateViews();
         ContactFragment.listview.setAdapter(ContactFragment.adapter);
-
     }
 
     public void loadContactFromServer(){

@@ -36,10 +36,5 @@ public interface Api {
             @Field("phone_number") String phone_number,
             @Field("name") String name
     );
-    @Multipart
-    @POST("image/")
-    Call<ResponseBody> upload(
-            @Field("id") String id,
-            @Field("file") File file
-    );
+
 }
