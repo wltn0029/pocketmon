@@ -36,6 +36,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
+import com.example.viewpagerdemo.RecyclerAdapter;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -133,8 +134,8 @@ public class CardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GameListActivity.class);
-                intent.putExtra("userAccountID", String.valueOf(MainActivity.userAccountId));
-                intent.putExtra("name",edittext.getText());
+                intent.putExtra("userAccountID", MainActivity.userAccountId);
+                intent.putExtra("name",edittext.getText().toString());
                 startActivity(intent);
             }
         });
