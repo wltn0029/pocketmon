@@ -177,8 +177,10 @@ public class MainActivity extends AppCompatActivity
         Intent intent = getIntent();
         userAccountId=Integer.valueOf(intent.getExtras().getString("userAccountID"));
         isFirstVisited = intent.getExtras().getBoolean("isFirstVisited");
-        Toast.makeText(this,String.valueOf(userAccountId),Toast.LENGTH_SHORT).show();
-
+        if(userAccountId>0)
+            Toast.makeText(this,"You sign in id "+String.valueOf(userAccountId),Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this,"You don't sign in the app",Toast.LENGTH_SHORT).show();
         items = new ArrayList<String>();
         dataList = new ArrayList<Contact>();
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());

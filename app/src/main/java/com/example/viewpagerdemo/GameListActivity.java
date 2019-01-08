@@ -52,7 +52,7 @@ public class GameListActivity extends AppCompatActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ; start()
+                 start();
             }
         });
     }
