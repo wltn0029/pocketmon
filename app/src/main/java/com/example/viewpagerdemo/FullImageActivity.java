@@ -40,6 +40,7 @@ public class FullImageActivity extends Activity {
         imageView = (ImageView) findViewById(R.id.imgPreview);
         VideoView videoView = (VideoView) findViewById(R.id.videoPreview);
         final String strImgUri = i.getExtras().getString("imgUri");
+        Log.d(">>>>>>>imageurl",strImgUri);
         selbtn = (Button)findViewById(R.id.selectbtn);
         selbtn.setOnClickListener(new Button.OnClickListener(){
             @Override
