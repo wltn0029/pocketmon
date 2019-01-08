@@ -62,7 +62,8 @@
             android:name=".PocketmonGo"
             android:hardwareAccelerated="true" />
         <activity android:name=".GoogleMapActivity" />
-        <activity android:name=".GameListActivity"></activity>
+        <activity android:name=".GameListActivity" />
+        <activity android:name=".GameActivity"></activity>
     </application>
 
 </manifest>

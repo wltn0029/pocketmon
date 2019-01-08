@@ -119,15 +119,15 @@ public class GoogleLoginActivity extends Activity {
             }
         });
 
-        Button continueButton = findViewById(R.id.continueBtn);
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("userAccountID", "");
-                startActivity(intent);
-            }
-        });
+//        Button continueButton = findViewById(R.id.continueBtn);
+//        continueButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                intent.putExtra("userAccountID", String.valueOf(0));
+//                startActivity(intent);
+//            }
+//        });
     }
 
     private void signIn() {
@@ -178,7 +178,7 @@ public class GoogleLoginActivity extends Activity {
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w("GOOGLE LOGIN>>>>>", "signInResult:failed code=" + e.getStatusCode());
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("userAccount", "");
+            intent.putExtra("userAccount", String.valueOf(0));
             startActivity(intent);
         }
     }

@@ -9,20 +9,33 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.viewpagerdemo.GameListActivity">
+
+    <EditText
+        android:id="@+id/edit_room"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/start"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-40dp"
+        />
     <Button
         android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Start !"
+        android:text="방만들기"
         android:layout_marginTop="40dp"
         android:textSize="17sp"/>
-    <TextView
-        android:id="@+id/output"
+
+    <ListView
+        android:id="@+id/listview_game"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/start"
-        android:layout_centerHorizontal="true"
-        android:textSize="16sp"
-        android:layout_marginTop="30dp"/>
+        android:layout_height="387dp"
+        android:layout_below="@+id/start"
+        android:layout_marginTop="5dp"
+        android:drawableTop="@android:color/black"
+        android:background="@drawable/list_back"
+        android:choiceMode="singleChoice"
+        android:divider="#ffcc22"
+        android:dividerHeight="1.5dp" />
 </RelativeLayout>
