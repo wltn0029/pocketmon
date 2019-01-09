@@ -1,4 +1,4 @@
-package com.example.q.ondraw;
+package com.example.viewpagerdemo;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -18,11 +18,10 @@ public class Block {
     int filledColor;
     boolean isBoundary=false;
 
-    public Block (int x, int y, int color){
+    public Block(int x, int y){
         this.x = x;
         this.y = y;
         paint =  new Paint();
-        filledColor = color;
         paint.setAntiAlias(true);
         paint.setColor(boundaryColor);
         paint.setStyle(Paint.Style.STROKE);
@@ -37,7 +36,7 @@ public class Block {
     public void setPaint(Paint mpaint){paint = mpaint;}
     public void setPosition(int x,int y){ this.x = x; this.y = y;}
     public boolean isBoundary(){return isBoundary;}
-
+    public void setColor(int mColor){filledColor =mColor; }
     public void drawBlock(Canvas c){
     if(isFilled){
         paint.setStyle(Paint.Style.FILL);

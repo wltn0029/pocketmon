@@ -1,23 +1,16 @@
-package com.example.q.ondraw;
+package com.example.viewpagerdemo;
 
-import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
-import android.animation.ObjectAnimator;
-import java.util.ArrayList;
 
-import static com.example.q.ondraw.MainActivity.*;
 
 public class MyView extends View {
     Canvas mcanvas;
@@ -27,9 +20,11 @@ public class MyView extends View {
     int userColor;
     int positionX=0;
     int positionY=0;
-    String direction;
+    public static String direction;
     float iconX;
     float iconY;
+    int originalXuser;
+    int originalYuser;
     Context context;
     int startX;
     int startY;
@@ -47,12 +42,12 @@ public class MyView extends View {
         initMyView();
     }
 
-    public MyView(Context mcontext,AttributeSet attrs){
+    public MyView(Context mcontext, AttributeSet attrs){
         super(mcontext,attrs);
         context = mcontext;
         initMyView();
     }
-    public MyView(Context context,AttributeSet attrs, int defStyleAttr){
+    public MyView(Context context, AttributeSet attrs, int defStyleAttr){
         super(context,attrs,defStyleAttr);
         initMyView();
     }
@@ -68,12 +63,12 @@ public class MyView extends View {
         m_Paint.setStrokeJoin(Paint.Join.ROUND);
         m_Paint.setStrokeCap(Paint.Cap.ROUND);
         m_Paint.setStrokeWidth(4);
-        iconX = MainActivity.heartX;
-        iconY = MainActivity.heartY;
-        direction = "UP";
+        iconX = GameActivity.heartX;
+        iconY = GameActivity.heartY;
+        direction = "DOWN";
         path = new Path();
-        startX=5;
-        startY=5;
+//        startX=5;
+//        startY=5;
         path.moveTo(0,0);
     }
     @Override
@@ -85,38 +80,42 @@ public class MyView extends View {
         int topStart = 5;
         for(int j=0;j<23;j++) {
             for (int i = 0; i < 23; i++) {
-                MainActivity.Board.get(i + 23 * j).drawBlock(canvas);
+                GameActivity.Board.get(i + 23 * j).drawBlock(canvas);
             }
         }
-        super.onDraw(canvas);
-        int prevX = startX;
-        int prevY=startY;
-        switch(direction){
-            case "UP":
-                if(startY>=50)
-                    startY-=50;
-                break;
-            case "DOWN":
-                if(startY<=1000)
-                    startY+=50;
-                break;
-            case "LEFT":
-                if(startX>=50)
-                    startX-=50;
-                break;
-            case"RIGHT":
-                if(startX<=1000)
-                    startX+=50;
-
+        if(GameActivity.curXuser == GameActivity.initXuser && GameActivity.curYuser == GameActivity.initYuser){
+            GameActivity.heart.setVisibility(VISIBLE);
         }
-       // path.moveTo(0,0);
-        path.lineTo(startX,startY);
+        path.moveTo(originalXuser*50.0f,originalYuser*50.0f);
+        path.lineTo(GameActivity.curXuser*50.0f,GameActivity.curYother*50.0f);
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(GameActivity.heart,View.X,View.Y,path);
+        objectAnimator.start();
+        originalXuser=GameActivity.curXuser;
+        originalYuser = GameActivity.curYuser;
+//        super.onDraw(canvas);
+//        int prevX = startX;
+//        int prevY=startY;
+//        switch(direction){
+//            case "UP":
+//                if(startY>=50)
+//                    startY-=50;
+//                break;
+//            case "DOWN":
+//                if(startY<=1000)
+//                    startY+=50;
+//                break;
+//            case "LEFT":
+//                if(startX>=50)
+//                    startX-=50;
+//                break;
+//            case"RIGHT":
+//                if(startX<=1000)
+//                    startX+=50;
+//
+//        }
+//       // path.moveTo(0,0);
+//        path.lineTo(startX,startY);
 
-        for(int j=0;j<23;j++) {
-            for (int i = 0; i < 23; i++) {
-                MainActivity.Board.get(i + 23 * j).drawBlock(canvas);
-            }
-        }
         //path.lineTo(180,418);
         /**
          *  p = new Path();
@@ -131,7 +130,7 @@ public class MyView extends View {
          *         p.moveTo(0, 300);
          *         p.lineTo(0, 0);
          */
-        canvas.drawPath(path, m_Paint);
+//        canvas.drawPath(path, m_Paint);
     }
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -139,17 +138,11 @@ public class MyView extends View {
         float xPos = event.getX();
         float yPos = event.getY();
         int y=5;
-        float originalX=iconX;
-        float originalY=iconY;
-        boolean prevFilled =MainActivity.Board.get(positionX+23*positionY).isFilled();
-        boolean currentFilled;
-        Path path = new Path();
         if(event.getAction()==MotionEvent.ACTION_DOWN||event.getAction()==MotionEvent.ACTION_MOVE) {
             if (yPos < 500 && (((xPos > yPos) && (xPos < 500)) || ((xPos + yPos < 1000) && (xPos > 500)))) {
                 //up
                 if (positionY > 0) {
                     positionY -= 1;
-                    iconY-=50f;
                     direction ="UP";
                 }
             }
@@ -157,7 +150,6 @@ public class MyView extends View {
             else if (yPos > 500 && (((xPos < yPos) && (xPos > 500)) || ((xPos + yPos > 1000) && (xPos < 500)))) {
                 if (positionY < 22) {
                     positionY += 1;
-                    iconY+=50f;
                     direction = "DOWN";
                 }
             }
@@ -166,7 +158,6 @@ public class MyView extends View {
                 //Toast.makeText(context,"left",Toast.LENGTH_SHORT).show();
                 if (positionX > 0) {
                     positionX -= 1;
-                    iconX-=50f;
                     direction = "LEFT";
                 }
             }
@@ -175,26 +166,10 @@ public class MyView extends View {
                 //Toast.makeText(context,"right",Toast.LENGTH_SHORT).show();
                 if (positionX < 22) {
                     positionX += 1;
-                    iconX+=50f;
                     direction="RIGHT";
                 }
             }
-            //currentFilled=MainActivity.Board.get(positionX+23*positionY).isFilled();
-            //case1: user starts landing
-            //if(prevFilled && !currentFilled && !isStart){isStart = true;}
-            //case2:user is landing
-            //else if(prevFilled && !currentFilled)
-
-            //path.moveTo(originalX + 0, originalY + 0);
-            //path.lineTo(iconX, iconY);
-            //ObjectAnimator objectAnimator =
-                //    ObjectAnimator.ofFloat(MainActivity.heart,View.X,View.Y, path);
-           // objectAnimator.start();
-            // invalidate();
-           // MainActivity.Board. get(positionX + 23 * positionY).setFilled(true);
-           // Log.d(">>>>>>>>>>>>>>", String.valueOf(event.getAction()));
-
-        invalidate();
+       // invalidate();
         }
         return true;
     }
