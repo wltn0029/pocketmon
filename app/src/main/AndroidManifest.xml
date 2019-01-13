@@ -29,11 +29,11 @@
             android:value="@string/facebook_app_id" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAjbbdWiqnLgxmp6jOmc_AN5GzKRw9NCXc" />
+            android:value="APIKEY" />
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider297905977524713"
+            android:authorities="com.facebook.app.FacebookContentProvider_APIKEY"
             android:exported="true" />
 
         <activity android:name=".GoogleLoginActivity">
